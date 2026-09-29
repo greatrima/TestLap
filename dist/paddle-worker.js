@@ -33,6 +33,8 @@ self.onmessage=async({data})=>{
    tensor.dispose();for(const t of Object.values(output))t.dispose();crop.width=1;crop.height=1;
   }
   src.width=1;src.height=1;
-  postMessage({type:'result',engine:'PaddleOCR',text:lines.map(l=>l.text).join('\n'),confidence:lines.length?lines.reduce((s,l)=>s+l.confidence,0)/lines.length*100:0,lines:lines.length,loadMs,inferMs:performance.now()-start,backend:'WASM · CPU'});
+  // Axis-aligned line boxes (detection-map units) let the page group lines spatially like the Android app.
+  const aabb=b=>{const c=Math.abs(Math.cos(b.angle)),n=Math.abs(Math.sin(b.angle)),hw=(b.width*c+b.height*n)/2,hh=(b.width*n+b.height*c)/2;return {left:b.cx-hw,top:b.cy-hh,right:b.cx+hw,bottom:b.cy+hh}};
+  postMessage({type:'result',engine:'PaddleOCR',text:lines.map(l=>l.text).join('\n'),confidence:lines.length?lines.reduce((s,l)=>s+l.confidence,0)/lines.length*100:0,lines:lines.map(l=>({text:l.text,confidence:l.confidence,box:aabb(l.box)})),loadMs,inferMs:performance.now()-start,backend:'WASM · CPU'});
  }catch(error){postMessage({type:'error',message:error?.message||String(error)})}
 };

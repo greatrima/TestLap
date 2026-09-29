@@ -2,12 +2,13 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#15243e"><meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="description" content="아이폰에서 한국어 주소를 인식하고 OCR 결과와 속도를 비교하는 시험판입니다.">
-  <title>도로명변환기 · OCR 시험실</title>
+  <meta name="theme-color" content="#15243e"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="도로명변환기">
+  <meta name="description" content="우편물 주소를 촬영해 지번과 도로명주소를 서로 바꿉니다.">
+  <title>도로명변환기</title>
   <link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./icon-192.png">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2315243e'/%3E%3Cpath d='M14 26V16h10m16 0h10v10M14 38v10h10m16 0h10V38' fill='none' stroke='%23ff8cba' stroke-width='5'/%3E%3Cpath d='M24 28h16M24 36h12' stroke='white' stroke-width='4'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="./style.css?v=3">
+  <link rel="stylesheet" href="./style.css?v=4">
 </head>
 <body>
  <main class="app-shell">
@@ -24,19 +25,40 @@
    <input id="upload" type="file" accept="image/*" hidden><input id="nativeCapture" type="file" accept="image/*" capture="environment" hidden>
   </section>
   <section class="information-panel">
-   <header class="toolbar"><h1>도로명변환기</h1><button id="settingsButton" class="toolbar-button" aria-label="설정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1M5.6 18.4l2.1-2.1m8.6-8.6 2.1-2.1"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span>설정</span></button></header>
+   <header class="toolbar"><h1>도로명변환기</h1><button id="offlineBadge" class="badge" hidden></button><button id="settingsButton" class="toolbar-button" aria-label="설정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1M5.6 18.4l2.1-2.1m8.6-8.6 2.1-2.1"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span>설정</span></button></header>
    <div id="informationScroll" class="information-scroll">
-    <div id="cropTools" class="crop-tools" hidden><button id="selectAll" class="subtle">전체 선택</button><button id="rotate" class="subtle">90° 회전</button><span>드래그로 영역 선택</span></div>
+    <div class="quick-row"><button id="regionButton" class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg><span id="regionName">지역 설정 안 됨</span></button><div id="cropTools" class="crop-tools" hidden><button id="selectAll" class="subtle">전체 선택</button><button id="rotate" class="subtle">90° 회전</button></div></div>
     <div id="cameraFallback" hidden><button id="nativeButton" class="secondary wide">기본 카메라로 촬영</button></div>
     <section id="progressPanel" class="progress-panel" hidden aria-live="polite"><div><strong id="status">준비 중</strong><button id="cancel" class="textbutton">취소</button></div><progress id="progress" max="100"></progress><p id="progressDetail"></p></section>
     <p id="error" class="error" role="alert" hidden></p>
-    <section id="recognizedSection" aria-label="인식 주소"><div class="field-heading"><label for="addressInput">인식된 주소</label><button id="copyAddress" class="copy-button" aria-label="인식된 주소 복사" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H5a1 1 0 0 0-1 1v12"/><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M8 8V4h8v4"/></svg></button></div><textarea id="addressInput" rows="4" placeholder="주소를 촬영하면 여기에 표시됩니다." spellcheck="false" aria-describedby="recognitionState"></textarea><div id="recognitionState" class="recognition-state" aria-live="polite">인식 대기</div><div id="localityPanel" class="locality-panel" hidden><strong>주소 후보</strong><div id="localityChoices"></div></div></section>
-    <details id="resultDetails" hidden><summary>인식 결과 비교 · 소요 시간</summary><section id="results" aria-label="OCR 결과" aria-live="polite"></section></details>
+    <section class="field" aria-label="인식한 주소">
+     <div class="field-heading"><label for="addressInput">인식한 주소</label><button id="copyAddress" class="copy-button" aria-label="인식한 주소 복사" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H5a1 1 0 0 0-1 1v12"/><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M8 8V4h8v4"/></svg></button></div>
+     <textarea id="addressInput" rows="2" placeholder="주소를 입력하거나 수정하세요" spellcheck="false" autocomplete="off" enterkeyhint="search"></textarea>
+     <p id="detailText" class="detail-text" hidden></p>
+    </section>
+    <section class="field result-field" aria-label="변환 결과">
+     <div class="field-heading"><span id="convertedLabel" class="label">반대 형식 주소</span><button id="copyResult" class="copy-button" aria-label="변환 주소 복사" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H5a1 1 0 0 0-1 1v12"/><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M8 8V4h8v4"/></svg></button></div>
+     <p id="convertedText" class="converted-text">지번 또는 도로명 변환 결과가 표시됩니다</p>
+     <p id="statusText" class="status-text" aria-live="polite"></p>
+     <button id="mapButton" class="secondary map-button" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14m6-12v14"/></svg><span>지도에서 보기</span></button>
+    </section>
+    <section id="candidatePanel" class="candidate-panel" hidden><strong>인식 후보</strong><div id="candidateList"></div></section>
+    <details id="resultDetails" hidden><summary>OCR 원문 · 소요 시간</summary><section id="results" aria-label="OCR 결과"></section></details>
    </div>
-   <div class="action-bar"><button id="run" class="primary" disabled>인식하기</button><button id="reset" class="secondary">다시 인식</button></div>
+   <div class="action-bar"><button id="convertButton" class="secondary">주소 변환</button><button id="run" class="primary" disabled>인식하기</button><button id="reset" class="secondary">다시 인식</button></div>
   </section>
  </main>
- <dialog id="settingsDialog"><div class="dialog-head"><h2>설정</h2><button id="closeSettings" class="iconbutton" aria-label="설정 닫기">×</button></div><div class="setting-group"><label for="engine">인식 방식</label><select id="engine"><option value="paddle">PaddleOCR · 한국어</option><option value="tesseract">Tesseract · 한국어 + 영어</option><option value="compare">두 방식 비교</option></select></div><div class="setting-group region-group"><label for="region">근무지역</label><select id="region"><option value="">지역 미설정</option></select></div><div class="setting-list"><button id="sample">예제 주소로 시험 <span aria-hidden="true">›</span></button><button id="prepare">오프라인 준비 <span aria-hidden="true">›</span></button><button id="helpButton">사용 방법 <span aria-hidden="true">›</span></button></div><p id="cacheMessage" class="cache-message" role="status"></p><div class="setting-status"><span>연결 상태</span><span id="offlineState">온라인</span></div><footer><span>OCR 시험판 · 0.3</span><span>주소 변환 기능은 다음 단계입니다.</span><span>사진·인식 결과는 서버에 전송하지 않습니다.</span></footer></dialog>
- <dialog id="help"><div class="dialog-head"><h2>사용 방법</h2><button id="closeHelp" class="iconbutton" aria-label="닫기">×</button></div><ol><li>카메라를 켜고 주소를 비춰주세요.</li><li><b>인식하기</b>를 누르면 촬영과 인식을 진행합니다.</li><li>일부만 읽으려면 <b>화면 정지</b> 후 사진 위를 드래그하세요.</li></ol><p>설정에서 두 OCR 비교와 예제 시험을 사용할 수 있습니다.</p><p>홈 화면 설치: Safari 공유 메뉴 → 홈 화면에 추가.</p><p>설치 후 설정에서 오프라인 준비를 완료해주세요. 저장 공간을 비우면 재다운로드가 필요합니다.</p><p>사진과 결과는 새로고침하면 사라집니다. 인식 점수는 정답률이 아닙니다.</p><a href="./licenses.txt" target="_blank" rel="noopener">오픈소스 및 모델 출처</a></dialog>
- <script src="./vendor/tesseract.min.js" defer></script><script type="module" src="./app.js?v=3"></script>
+ <dialog id="settingsDialog"><div class="dialog-head"><h2>설정</h2><button id="closeSettings" class="iconbutton" aria-label="설정 닫기">×</button></div>
+  <div class="setting-group"><label for="region">근무지역</label><select id="region"><option value="">지역 미설정</option></select></div>
+  <div class="setting-group"><label for="vworldKey">VWorld 검색 API 키</label><input id="vworldKey" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="설정 안 됨"></div>
+  <div class="setting-group"><label for="kakaoKey">카카오 REST API 키</label><input id="kakaoKey" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="설정 안 됨"></div>
+  <button id="saveKeys" class="primary wide">API 키 저장</button><p id="keyMessage" class="cache-message" role="status"></p>
+  <div class="setting-group"><label for="mapProvider">지도 앱</label><select id="mapProvider"><option value="naver">네이버지도</option><option value="kakao">카카오맵</option></select></div>
+  <div class="setting-group"><label for="engine">인식 방식</label><select id="engine"><option value="paddle">PaddleOCR · 한국어</option><option value="tesseract">Tesseract · 한국어 + 영어</option><option value="compare">두 방식 비교</option></select></div>
+  <div class="setting-list"><button id="prepare">오프라인 준비 <span aria-hidden="true">›</span></button><button id="sample">예제 주소로 시험 <span aria-hidden="true">›</span></button><button id="helpButton">사용 방법 <span aria-hidden="true">›</span></button></div>
+  <p id="cacheMessage" class="cache-message" role="status"></p>
+  <div class="setting-status"><span>연결 상태</span><span id="offlineState">온라인</span></div>
+  <footer><span>도로명변환기 PWA · 0.4</span><span>사진과 OCR 원문은 기기 밖으로 보내지 않습니다. 주소 변환 때 기본주소만 VWorld·카카오 API로 보냅니다.</span></footer></dialog>
+ <dialog id="help"><div class="dialog-head"><h2>사용 방법</h2><button id="closeHelp" class="iconbutton" aria-label="닫기">×</button></div><ol><li>주소를 비추고 <b>인식하기</b>를 누르세요.</li><li>주소가 하나면 바로 변환합니다. 여러 개면 <b>인식 후보</b>에서 고르세요.</li><li>일부만 읽으려면 사진 위를 드래그한 뒤 <b>인식하기</b>.</li><li>직접 고친 주소는 <b>주소 변환</b>으로 다시 찾습니다.</li></ol><p>주소 변환에는 인터넷과 설정의 API 키가 필요합니다. VWorld 키는 이 사이트 주소를 서비스 URL로 등록해 발급하세요.</p><p>홈 화면 설치: Safari 공유 메뉴 → 홈 화면에 추가. 설치한 앱에서 오프라인 준비가 끝나면 인터넷 없이 인식·후보 선택이 됩니다.</p><a href="./licenses.txt" target="_blank" rel="noopener">오픈소스 및 모델 출처</a></dialog>
+ <script src="./vendor/tesseract.min.js" defer></script><script type="module" src="./app.js?v=4"></script>
 </body></html>

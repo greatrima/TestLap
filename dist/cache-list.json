@@ -1,27 +1,27 @@
-[
-  "./address-suggest.mjs",
-  "./app.js?v=3",
-  "./icon-192.png",
-  "./icon-512.png",
-  "./index.html",
-  "./manifest.webmanifest",
-  "./models/eng.traineddata.gz",
-  "./models/kor.traineddata.gz",
-  "./models/korean-dict.json",
-  "./models/korean-rec.onnx",
-  "./models/localities.json",
-  "./models/text-det.onnx",
-  "./ocr-core.js",
-  "./paddle-worker.js",
-  "./sample.png",
-  "./style.css?v=3",
-  "./vendor/ort-wasm-simd-threaded.mjs",
-  "./vendor/ort-wasm-simd-threaded.wasm",
-  "./vendor/ort.wasm.min.js",
-  "./vendor/tesseract-core-lstm.wasm",
-  "./vendor/tesseract-core-lstm.wasm.js",
-  "./vendor/tesseract-core-simd-lstm.wasm",
-  "./vendor/tesseract-core-simd-lstm.wasm.js",
-  "./vendor/tesseract.min.js",
-  "./vendor/worker.min.js"
-]
+{
+  "required": [
+    "./index.html",
+    "./app.js?v=4",
+    "./style.css?v=4",
+    "./address-core.mjs",
+    "./address-convert.mjs",
+    "./address-suggest.mjs",
+    "./ocr-core.js",
+    "./paddle-worker.js",
+    "./manifest.webmanifest",
+    "./models/korean-dict.json",
+    "./models/korean-rec.onnx",
+    "./models/text-det.onnx",
+    "./models/localities.json",
+    "./vendor/ort.wasm.min.js",
+    "./vendor/ort-wasm-simd-threaded.mjs",
+    "./vendor/ort-wasm-simd-threaded.wasm",
+    "./vendor/tesseract.min.js"
+  ],
+  "optional": [
+    "./icon-192.png",
+    "./icon-512.png",
+    "./sample.png",
+    "./licenses.txt"
+  ]
+}

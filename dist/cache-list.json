@@ -1,0 +1,32 @@
+{
+  "required": [
+    "./index.html",
+    "./app.js?v=15",
+    "./style.css?v=15",
+    "./address-core.mjs",
+    "./address-convert.mjs",
+    "./address-suggest.mjs",
+    "./address-dictionary.mjs",
+    "./dictionary-worker.mjs",
+    "./ocr-core.js",
+    "./paddle-worker.js",
+    "./manifest.webmanifest",
+    "./models/address_dictionary.tsv.gz",
+    "./models/dictionary-version.json",
+    "./models/korean-dict.json",
+    "./models/korean-rec.onnx",
+    "./models/text-det.onnx",
+    "./vendor/ort.wasm.min.js",
+    "./vendor/ort-wasm-simd-threaded.mjs",
+    "./vendor/ort-wasm-simd-threaded.wasm",
+    "./vendor/tesseract.min.js"
+  ],
+  "optional": [
+    "./apple-touch-icon.png",
+    "./icon-192.png",
+    "./icon-512.png",
+    "./jebichan-icon.png",
+    "./share-qr.png",
+    "./licenses.txt"
+  ]
+}

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#15243e"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="도로명변환기">
+  <meta name="description" content="우편물 주소를 촬영해 지번과 도로명주소를 서로 바꿉니다.">
+  <title>도로명변환기</title>
+  <link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./apple-touch-icon.png?v=2">
+  <link rel="icon" type="image/png" href="./icon-192.png?v=2">
+  <link rel="stylesheet" href="./style.css?v=15">
+</head>
+<body>
+ <main class="app-shell">
+  <section class="camera-pane" aria-label="주소 촬영">
+   <div id="stage" class="stage">
+    <div id="empty"><svg viewBox="0 0 72 72" aria-hidden="true"><path d="M12 26V14h14m20 0h14v12M12 46v12h14m20 0h14V46"/><path d="M24 29h24M24 38h24M24 47h14"/></svg><p>주소를 비춰주세요</p></div>
+    <video id="video" autoplay playsinline muted hidden></video>
+    <div id="photoWrap" hidden><canvas id="photo" aria-label="인식할 사진"></canvas><canvas id="selection" aria-label="드래그하여 주소 영역 선택"></canvas></div>
+    <div id="liveGuide" hidden></div>
+   </div>
+   <div class="camera-top"><button id="uploadButton" class="camera-button" aria-label="사진 선택"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5"/><path d="m4 18 5-5 3 3 4-6 5 8"/></svg><span>사진</span></button><button id="pauseButton" class="camera-button" hidden>일시정지</button></div>
+   <button id="cameraButton" class="camera-start">카메라 켜기</button>
+   <div id="zoomRow" class="zoomrow" hidden><label for="zoom">확대</label><input id="zoom" type="range" min="1" max="3" value="1" step="0.1"><output id="zoomValue">1.0×</output></div>
+   <input id="upload" type="file" accept="image/*" hidden><input id="nativeCapture" type="file" accept="image/*" capture="environment" hidden>
+  </section>
+  <section class="information-panel">
+   <header class="toolbar"><h1>도로명변환기</h1><button id="offlineBadge" class="badge" hidden></button><button id="settingsButton" class="toolbar-button" aria-label="설정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1M5.6 18.4l2.1-2.1m8.6-8.6 2.1-2.1"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span>설정</span></button></header>
+   <div id="informationScroll" class="information-scroll">
+    <div id="installHint" class="install-hint" hidden><span id="installText">공유 <svg viewBox="0 0 24 24" aria-label="공유 버튼"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M8 10H6a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1h-2"/></svg> → <b>홈 화면에 추가</b>로 앱처럼 쓰세요</span><button id="closeInstallHint" aria-label="안내 닫기">×</button></div>
+    <div class="quick-row"><button id="regionButton" class="chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg><span id="regionName">지역 설정 안 됨</span></button><div id="cropTools" class="crop-tools" hidden><button id="selectAll" class="subtle">전체 선택</button><button id="rotate" class="subtle">90° 회전</button></div></div>
+    <div id="cameraFallback" hidden><button id="nativeButton" class="secondary wide">기본 카메라로 촬영</button></div>
+    <section id="progressPanel" class="progress-panel" hidden aria-live="polite"><div><strong id="status">준비 중</strong><button id="cancel" class="textbutton">취소</button></div><progress id="progress" max="100"></progress><p id="progressDetail"></p></section>
+    <p id="error" class="error" role="alert" hidden></p>
+    <section class="field" aria-label="기준 주소">
+     <div class="address-box"><div class="box-head"><label for="addressInput">기준 주소</label><button id="copyAddress" class="copy-button" aria-label="기준 주소 복사" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H5a1 1 0 0 0-1 1v12"/><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M8 8V4h8v4"/></svg></button></div><textarea id="addressInput" rows="2" spellcheck="false" autocomplete="off" enterkeyhint="search"></textarea></div>
+     <p id="detailText" class="detail-text" hidden></p>
+    </section>
+    <section class="field result-field" aria-label="변환 결과">
+     <div class="result-row"><p id="convertedText" class="converted-text">기준 주소를 인식하거나 입력해주세요</p><button id="copyResult" class="copy-button" aria-label="변환 주소 복사" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H5a1 1 0 0 0-1 1v12"/><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M8 8V4h8v4"/></svg></button></div>
+     <p id="statusText" class="status-text" aria-live="polite"></p>
+     <button id="mapButton" class="secondary map-button" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14m6-12v14"/></svg><span>지도에서 보기</span></button>
+    </section>
+    <section id="candidatePanel" class="candidate-panel" hidden><strong>인식 후보</strong><div id="candidateList"></div></section>
+    <section id="devPanel" class="dev-panel" hidden><pre id="devText"></pre><canvas id="devCrop" width="1" height="1" aria-label="OCR 입력 영역"></canvas></section>
+    <details id="resultDetails" hidden><summary>OCR 원문 · 소요 시간</summary><section id="results" aria-label="OCR 결과"></section></details>
+   </div>
+   <div class="action-bar"><button id="convertButton" class="secondary">주소 변환</button><button id="run" class="primary" disabled>인식하기</button><button id="reset" class="secondary">다시 인식</button></div>
+  </section>
+ </main>
+ <dialog id="settingsDialog"><div class="dialog-head"><h2 class="settings-title"><img src="./jebichan-icon.png" alt="" width="30" height="30">설정</h2><span id="appVersionBadge" class="version-badge"></span><button id="closeSettings" class="iconbutton" aria-label="설정 닫기">×</button></div>
+  <label class="toggle"><input type="checkbox" id="continuousScan">연속 스캔</label>
+  <h3>우선 인식 지역</h3>
+  <div class="setting-group"><label for="regionProvince">시·도</label><select id="regionProvince"><option value="">전체</option></select></div>
+  <div class="setting-group"><label for="regionCity" id="regionCityLabel">시·군</label><select id="regionCity" disabled><option value="">전체</option></select></div>
+  <div class="setting-group" id="regionGuGroup" hidden><label for="regionGu">구</label><select id="regionGu"><option value="">전체</option></select></div>
+  <div class="setting-group" id="regionLocalityGroup" hidden><label for="regionLocality">동</label><select id="regionLocality" multiple></select></div>
+  <p id="regionMessage" class="cache-message" role="status"></p>
+  <h3>API 설정</h3>
+  <div class="setting-group"><label for="vworldKey">VWorld 검색 API 키</label><input id="vworldKey" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="설정 안 됨"></div>
+  <div class="setting-group"><label for="kakaoKey">카카오 REST API 키</label><input id="kakaoKey" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="설정 안 됨"></div>
+  <button id="saveKeys" class="primary wide">API 키 저장</button><p id="keyMessage" class="cache-message" role="status"></p>
+  <div class="setting-group"><label for="mapProvider">지도 앱</label><select id="mapProvider"><option value="naver">네이버지도</option><option value="kakao">카카오맵</option></select></div>
+  <h3>인식</h3>
+  <div class="setting-group"><label for="engine">인식 방식</label><select id="engine"><option value="paddle">PaddleOCR · 한국어</option><option value="tesseract">Tesseract · 한국어 + 영어</option><option value="compare">두 방식 비교</option></select></div>
+  <label class="toggle"><input type="checkbox" id="developerMode">개발자 모드</label>
+  <h3>버튼 표시</h3>
+  <div id="buttonSettings"></div>
+  <h3>정보</h3>
+  <div class="setting-status"><span>앱 버전</span><span id="appVersion"></span></div>
+  <div class="setting-status"><span>현재 주소 사전</span><span id="dictionaryVersion">불러오는 중</span></div>
+  <button id="checkDictionary" class="secondary wide">주소 사전 업데이트 확인</button><p id="dictionaryMessage" class="cache-message" role="status"></p>
+  <div class="setting-list"><button id="helpButton">사용 방법 <span aria-hidden="true">›</span></button></div>
+  <p id="cacheMessage" class="cache-message" role="status"></p>
+  <div class="setting-status"><span>연결 상태</span><span id="offlineState">온라인</span></div>
+  <h3>공유</h3>
+  <img class="share-qr" src="./share-qr.png" alt="도로명변환기 주소 QR 코드" width="220" height="220" loading="lazy"></dialog>
+ <dialog id="help"><div class="dialog-head"><h2>사용 방법</h2><button id="closeHelp" class="iconbutton" aria-label="닫기">×</button></div><ol><li>주소를 네모칸에 맞추면 자동으로 인식합니다. 주소가 하나면 바로 변환합니다.</li><li>여러 개면 <b>인식 후보</b>에서 고르세요. 다음 우편물은 <b>다시 인식</b>.</li><li>자동 인식이 어려우면 <b>화면 정지</b> 후 사진 위를 드래그하고 <b>인식하기</b>.</li><li>직접 고친 주소는 <b>주소 변환</b>으로 다시 찾습니다.</li></ol><p>주소 변환에는 인터넷이 필요합니다. 기본 VWorld 키가 들어 있고, 설정에 개인 키를 넣으면 그 키를 씁니다.</p><p>홈 화면 설치: Safari 공유 메뉴 → 홈 화면에 추가. 설치한 앱에서 오프라인 준비가 끝나면 인터넷 없이 인식·후보 선택이 됩니다.</p><a href="./licenses.txt" target="_blank" rel="noopener">오픈소스 및 모델 출처</a></dialog>
+ <!-- Anonymous launch count (GoatCounter, no cookies): only /app (home-screen) or /web (browser) is sent, never addresses or photos. -->
+ <script>window.goatcounter={path:()=>navigator.standalone===true||matchMedia('(display-mode: standalone)').matches?'/app':'/web',title:()=>navigator.standalone===true||matchMedia('(display-mode: standalone)').matches?'홈 화면 앱':'브라우저'};</script>
+ <script data-goatcounter="https://greatrima.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+ <script src="./vendor/tesseract.min.js" defer></script><script type="module" src="./app.js?v=15"></script>
+</body></html>

@@ -1,0 +1,7 @@
+# Downloaded by scripts/fetch-assets.py during deployment
+dist/models/*.onnx
+dist/models/*.traineddata.gz
+dist/models/address_dictionary.tsv.gz
+dist/models/dictionary-version.json
+dist/vendor/*.wasm
+dist/vendor/tesseract-core-*.wasm.js

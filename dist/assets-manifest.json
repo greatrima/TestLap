@@ -1,0 +1,86 @@
+[
+  {
+    "path": "./models/korean-rec.onnx",
+    "bytes": 13418787,
+    "sha256": "92f0b7785e64fc9090106a241cf4c1eb97472824558272751b88a2a4476d3a08",
+    "source": "https://huggingface.co/PaddlePaddle/korean_PP-OCRv5_mobile_rec_onnx/resolve/5c6f574b8e2230adf4287b33e736d71b9fabd28e/inference.onnx"
+  },
+  {
+    "path": "./models/text-det.onnx",
+    "bytes": 4826518,
+    "sha256": "a431985659dc921974177a95adcfbb90fd9e51989a5e04d70d0b75f597b6e61d",
+    "source": "https://huggingface.co/PaddlePaddle/PP-OCRv5_mobile_det_onnx/resolve/e6f4fa85f00e168c862bc462aebca69eef9b3d3d/inference.onnx"
+  },
+  {
+    "path": "./models/korean-inference.yml",
+    "bytes": 96039,
+    "sha256": "f757fa1c40e99edcf27e9cce879b93eb2a51fa46f5ef39095689b8c37dd75998",
+    "source": "https://huggingface.co/PaddlePaddle/korean_PP-OCRv5_mobile_rec_onnx/resolve/5c6f574b8e2230adf4287b33e736d71b9fabd28e/inference.yml"
+  },
+  {
+    "path": "./vendor/ort.wasm.min.js",
+    "bytes": 48327,
+    "sha256": "65e09376df69107e881b5c34d2d37aed333a366b6d941073ec518168e269b87d",
+    "source": "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort.wasm.min.js"
+  },
+  {
+    "path": "./vendor/ort-wasm-simd-threaded.mjs",
+    "bytes": 20856,
+    "sha256": "30dd851d9c00622940500f71ddd2ff8820c5cb65270816080175b958705385a8",
+    "source": "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort-wasm-simd-threaded.mjs"
+  },
+  {
+    "path": "./vendor/ort-wasm-simd-threaded.wasm",
+    "bytes": 11210254,
+    "sha256": "71aef04959c5c1b6de461b6538e2058e306610034a85aad2742d0c7fd4533fe4",
+    "source": "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/ort-wasm-simd-threaded.wasm"
+  },
+  {
+    "path": "./vendor/tesseract.min.js",
+    "bytes": 62961,
+    "sha256": "10fff78484067759c43028a02a72d76d0b90eb17302bb23b58a9ec5410bc928b",
+    "source": "https://cdn.jsdelivr.net/npm/tesseract.js@6.0.1/dist/tesseract.min.js"
+  },
+  {
+    "path": "./vendor/worker.min.js",
+    "bytes": 111162,
+    "sha256": "38645599043239c0eb6db08a6504a92dcdc292200535f3e9339cd77c4443b842",
+    "source": "https://cdn.jsdelivr.net/npm/tesseract.js@6.0.1/dist/worker.min.js"
+  },
+  {
+    "path": "./vendor/tesseract-core-simd-lstm.wasm.js",
+    "bytes": 3954569,
+    "sha256": "9d7c43fb206dc9f48475228b46bf35f888fa9e6259da2e67d5a75c77049f2dc7",
+    "source": "https://cdn.jsdelivr.net/npm/tesseract.js-core@6.0.0/tesseract-core-simd-lstm.wasm.js"
+  },
+  {
+    "path": "./vendor/tesseract-core-simd-lstm.wasm",
+    "bytes": 2871377,
+    "sha256": "187d76742dfc0d8929f0b49a619f145bb6370730776c7bd0d3e20c6b2098808d",
+    "source": "https://cdn.jsdelivr.net/npm/tesseract.js-core@6.0.0/tesseract-core-simd-lstm.wasm"
+  },
+  {
+    "path": "./vendor/tesseract-core-lstm.wasm.js",
+    "bytes": 3954181,
+    "sha256": "775a35df6f2ae100e02609443e6bd5cafcd07983dd6175454ca4a432a7730687",
+    "source": "https://cdn.jsdelivr.net/npm/tesseract.js-core@6.0.0/tesseract-core-lstm.wasm.js"
+  },
+  {
+    "path": "./vendor/tesseract-core-lstm.wasm",
+    "bytes": 2871085,
+    "sha256": "220e2e87551edccb85519796a170469f8ab2a8055216789e3b8b1ada18b7bc2b",
+    "source": "https://cdn.jsdelivr.net/npm/tesseract.js-core@6.0.0/tesseract-core-lstm.wasm"
+  },
+  {
+    "path": "./models/kor.traineddata.gz",
+    "bytes": 6951378,
+    "sha256": "9d454186b4e2556854b625c43e44d93783a5be7ee89eb1dc6702dfbddced3f4f",
+    "source": "https://tessdata.projectnaptha.com/4.0.0/kor.traineddata.gz"
+  },
+  {
+    "path": "./models/eng.traineddata.gz",
+    "bytes": 10923060,
+    "sha256": "ed350f3752f81ee8f38769edc14d92d997dababe23b565c59879372cc46a2468",
+    "source": "https://tessdata.projectnaptha.com/4.0.0/eng.traineddata.gz"
+  }
+]
